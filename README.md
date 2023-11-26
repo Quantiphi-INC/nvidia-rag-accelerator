@@ -22,13 +22,28 @@ git lfs install
 git lfs pull
 git submodule update --init --recursive
 ```
+Clone and place a embedding model of choice under `backend/embedding_model`. We have used `BAAI/bge-base-en-v1.5`.
+any changes to the embedding model has to be updated in backend/config.yml file.
 
+```shell
+git clone https://huggingface.co/BAAI/bge-base-en-v1.5 backend/embedding_model/BAAI/bge-base-en-v1.5
+```
 We have the fronend, backend and milvus DB as a microservice which can be started using the compose file provided along with the project.
 
 ```shell
 docker compose up -d
 ```
 Starting the backend would also mount './dataset' folder inside the container. To index the data into the vector database hit the /ingest_data endpoint with the dataset folder. This would chunk the data and index the same for RAG Pipeline.
+
+```shell
+curl  -X POST \
+  'http://localhost:9999/ingest_data' \
+  --header 'Accept: */*' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "path":"/dataset"
+}'
+```
 
 ## To Start LLM Service
 In the below examples we show the commands for running a gated [LLAMA2-13b-chat](meta-llama/Llama-2-13b-chat-hf) model. We would need the huggingface token to be passed in the env variable of the below command. We can also adjust the GPU that is going to be used for triton inference server. In our case we are using gpu rank 1 for running it.

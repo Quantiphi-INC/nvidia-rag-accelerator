@@ -1,56 +1,42 @@
-<div class="row">
-  <div class="column">
-    <img src="./media/NVIDIA-logo.png" alt="NVIDIA-LOGO" style="width:10%">
-  </div>
-  <div class="column">
-    <img src="./media/nvidia-elite-partner-badge.png" alt="ELITE-PARTNER-LOGO" style="width:10%">
-  </div>
-  <div class="column">
-    <img src="./media/Q-logo.png" alt="Q-LOGO" style="width:10%">
-  </div>
-</div>
+<p float="left">
+  <img src="./media/NVIDIA-logo.png" style="width:10%" hspace="10%"/> <img src="./media/nvidia-elite-partner-badge.png" style="width:10%" hspace="10%" /> <img src="./media/Q-logo.png" style="width:10%" hspace="10%"/>
+</p>
 
 ## Architecture
-<img src='./media/architecture.png' alt='architecture' style='width:80%'/>
+<img src='./media/architecture.png' alt='architecture' style='width:100%'/>
 
-## Tech
-# Steps to setup for local development
-- Clone the repo
-- LLM
-    - update tensorrtllm_backend submodules
-    - download and create engine file for LLM based on the architecture
-    - configure triton inference server
-    - start triton inference server
-- start docker compose services
-    - backend
-    - frontend
-    - milvus-db
-- check docker network
-- hit ingest endpoint
-- navigate to UI
-- test application
+## Tech Stack
+- Streamlit
+- Langchain
+- Milvus
+- TrtLLM
+- FastAPI
 
-# Setting up Project locally
+## Setting up Project locally
 
-Clone the repo with `git clone` which would contain **tensorrtllm_backend** as a submodule. Step into the folder to update the submodule dependencies.
+Cloning the repo containes services along with   **tensorrtllm_backend** as a submodule which comes with submodules that can be updated with the commands below.
 
-To start the service run `docker compose up -d`. This would start backend, frontend and Milvus vector DB as microservice.
-Backend would also mount './dataset' folder inside the container. To index the data into the vector database hit the /ingest_data endpoint with the dataset folder. This would chunk the data and index the same for RAG Pipeline.
-
-## To Start LLM Service
-To update the submodule dependencies run the following commands
-
-```
+```shell
 cd tensorrtllm_backend/
 git lfs install
 git lfs pull
 git submodule update --init --recursive
 ```
-In the below examples we show the commands for running a gated model. We would need the huggingface token to be passed in the env variable of the below command. We can also adjust the GPU that is going to be used for triton inference server. In our case we are using gpu rank 1 for running it.
+
+We have the fronend, backend and milvus DB as a microservice which can be started using the compose file provided along with the project.
+
+```shell
+docker compose up -d
+```
+Starting the backend would also mount './dataset' folder inside the container. To index the data into the vector database hit the /ingest_data endpoint with the dataset folder. This would chunk the data and index the same for RAG Pipeline.
+
+## To Start LLM Service
+In the below examples we show the commands for running a gated [LLAMA2-13b-chat](meta-llama/Llama-2-13b-chat-hf) model. We would need the huggingface token to be passed in the env variable of the below command. We can also adjust the GPU that is going to be used for triton inference server. In our case we are using gpu rank 1 for running it.
 
 Running this docker container will add the container to the same network as other microservices, so that they can communicate with each other.
 
-```
+```shell
+# Update HF_TOKEN
 docker run --rm -it --env HF_TOKEN=hf_* --name=triton_server --network rag_accelerator -p8000:8000 -p8001:8001 -p8002:8002 --shm-size=2g --ulimit memlock=-1 --ulimit stack=67108864 --gpus '"device=1"' -v ./tensorrtllm_backend:/tensorrtllm_backend nvcr.io/nvidia/tritonserver:23.10-trtllm-python-py3 bash
 ```
 
@@ -82,5 +68,9 @@ sed -i 's#${engine_dir}#/tensorrtllm_backend/tensorrt_llm/examples/llama/Llama-2
 ### Start triton server
 Run the command to start the triton server: 
 `tritonserver --model-repository=/opt/tritonserver/inflight_batcher_llm`
+
+
+## Reference
+- [Llama2 trtllm guide](https://github.com/triton-inference-server/tutorials/blob/main/Popular_Models_Guide/Llama2/trtllm_guide.md)
 
  

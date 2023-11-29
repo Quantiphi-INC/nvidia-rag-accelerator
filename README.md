@@ -6,13 +6,15 @@
 <img src='./media/architecture.png' alt='architecture' style='width:100%'/>
 
 ## Tech Stack
-- Streamlit
 - Langchain
+- TensorRT-LLM
+- Triton Inference Server
 - Milvus
-- TrtLLM
+- Hugging Face
+- Streamlit
 - FastAPI
 
-## Setting up Project locally
+## Setting up Project Locally
 
 Cloning the repo containes services along with   **tensorrtllm_backend** as a submodule which comes with submodules that can be updated with the commands below.
 
@@ -29,7 +31,7 @@ any changes to the embedding model has to be updated in backend/config.yml file.
 ```shell
 git clone https://huggingface.co/BAAI/bge-base-en-v1.5 backend/embedding_model/BAAI/bge-base-en-v1.5
 ```
-We have the fronend, backend and milvus DB as a microservice which can be started using the compose file provided along with the project.
+We have the fronend, backend and Milvus DB as a microservice which can be started using the compose file provided along with the project.
 
 ```shell
 docker compose up -d
@@ -61,7 +63,7 @@ docker run --rm -it --env HF_TOKEN=hf_* \
 nvcr.io/nvidia/tritonserver:23.10-trtllm-python-py3 bash
 ```
 
-### Install Llama requirements
+### Install LLaMa2 requirements
 The following commands are to be executed inside the docker container that we started in the above. Command assumes that we already have the engine file for the model that we are deploying. Follow this [document to create the engine file](https://github.com/NVIDIA/TensorRT-LLM#quick-start). We have to adjust the commands based on the model that we are using and the location where we put the engine files. This example assumes that we have 2 folders
 - tensorrtllm_backend/tensorrt_llm/examples/llama/Llama-2-13b-chat-hf
 - tensorrtllm_backend/tensorrt_llm/examples/llama/Llama-2-13b-chat-hf-engine
@@ -76,7 +78,7 @@ Install the requirements of llama model.
 ### Copy config
 `cp -R /tensorrtllm_backend/all_models/inflight_batcher_llm /opt/tritonserver/.`
 
-### configuration of triton inference server
+### Configuration of Triton Inference Server
 ```
 sed -i 's#${tokenizer_dir}#meta-llama/Llama-2-13b-hf#' /opt/tritonserver/inflight_batcher_llm/preprocessing/config.pbtxt && \
 sed -i 's#${tokenizer_type}#llama#' /opt/tritonserver/inflight_batcher_llm/preprocessing/config.pbtxt && \
@@ -86,11 +88,14 @@ sed -i 's#${decoupled_mode}#true#' /opt/tritonserver/inflight_batcher_llm/tensor
 sed -i 's#${engine_dir}#/tensorrtllm_backend/tensorrt_llm/examples/llama/Llama-2-13b-chat-hf-engine/1-gpu/#' /opt/tritonserver/inflight_batcher_llm/tensorrt_llm/config.pbtxt
 ```
 
-### Start triton server
+### Start Triton Server
 Run the command to start the triton server: 
 `tritonserver --model-repository=/opt/tritonserver/inflight_batcher_llm`
 
 Now we have all the services ready. The frontend will be accessible on http://localhost:8501 port.
+
+### About Quantiphi
+Quantiphi is an award-winning AI-first digital engineering company driven by the desire to reimagine and realize transformational opportunities at the heart of the business. Since its inception in 2013, Quantiphi has solved the toughest and most complex business problems by combining deep industry experience, disciplined cloud, and data-engineering practices, and cutting-edge artificial intelligence research to achieve accelerated and quantifiable business results. Learn more at www.quantiphi.com.
 
 ## Reference
 - [Llama2 trtllm guide](https://github.com/triton-inference-server/tutorials/blob/main/Popular_Models_Guide/Llama2/trtllm_guide.md)

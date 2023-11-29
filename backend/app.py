@@ -83,7 +83,7 @@ def call_llm(payload: Retrieve):
     # call llm
     output = get_llm_response(input).json()
     print(output['text_output'])
-    parsed_output = output["text_output"].split('bot_response:')[-1].split('</s><s>')[0]
+    parsed_output = output["text_output"].split('bot_response:')[-1].split('</s><s>')[0].lstrip('"')
     return {"text_output": parsed_output}
 
 

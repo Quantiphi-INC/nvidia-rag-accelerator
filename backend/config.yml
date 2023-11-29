@@ -7,7 +7,7 @@ db:
   
 llm:
   url: http://triton_server:8000/v2/models/ensemble/generate
-  max_tokens: 250
+  max_tokens: 1024
   bad_words: ""
   stop_words: "</s>"
   top_k: 40

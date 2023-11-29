@@ -1,9 +1,14 @@
+## Introduction
+Developed jointly by [Quantiphi Inc](www.quantiphi.com) and [NVIDIA](https://www.nvidia.com/en-us/), this repository provides an example of an LLM-based RAG (Retriever Augmented Generation) pipeline to accelerate and simplify the implementation of chatbot solutions in the Telco industry. 
+
 <p float="left">
   <img src="./media/NVIDIA-logo.png" style="width:10%" hspace="10%"/> <img src="./media/nvidia-elite-partner-badge.png" style="width:10%" hspace="10%" /> <img src="./media/Q-logo.png" style="width:10%" hspace="10%"/>
 </p>
 
 ## Architecture
 <img src='./media/architecture.png' alt='architecture' style='width:100%'/>
+
+**The workflow was tested on a single NVIDIA A100 GPU (80GB GPU Memory)** 
 
 ## Tech Stack
 - Langchain
@@ -94,7 +99,7 @@ Run the command to start the triton server:
 
 Now we have all the services ready. The frontend will be accessible on http://localhost:8501 port.
 
-### About Quantiphi
+## About Quantiphi
 Quantiphi is an award-winning AI-first digital engineering company driven by the desire to reimagine and realize transformational opportunities at the heart of the business. Since its inception in 2013, Quantiphi has solved the toughest and most complex business problems by combining deep industry experience, disciplined cloud, and data-engineering practices, and cutting-edge artificial intelligence research to achieve accelerated and quantifiable business results. Learn more at www.quantiphi.com.
 
 ## Reference

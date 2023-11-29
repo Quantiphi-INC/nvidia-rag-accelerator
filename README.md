@@ -54,9 +54,9 @@ curl  -X POST \
 ```
 
 ## To Start LLM Service
-In the below examples we show the commands for running a gated [LLAMA2-13b-chat](meta-llama/Llama-2-13b-chat-hf) model. We would need the huggingface token to be passed in the env variable of the below command. We can also adjust the GPU that is going to be used for triton inference server. In our case we are using gpu rank 1 for running it.
+In the below examples we show the commands for running a gated [LLAMA2-13b-chat](meta-llama/Llama-2-13b-chat-hf) model from Hugging Face. We would need the Hugging Face token to be passed in the env variable of the below command. We can also adjust the GPU that is going to be used for triton inference server by changing the `--gpus` argument. In our example, we have specified the GPU device id as 0. 
 
-Running this docker container will add the container to the same network as other microservices, so that they can communicate with each other.
+Running this Docker container will add the container to the same network as other microservices, so that they can communicate with each other.
 
 ```shell
 # Update HF_TOKEN
@@ -64,12 +64,12 @@ docker run --rm -it --env HF_TOKEN=hf_* \
 --name=triton_server --network rag_accelerator \
 -p8000:8000 -p8001:8001 -p8002:8002 --shm-size=2g \
 --ulimit memlock=-1 --ulimit stack=67108864 \
---gpus '"device=1"' -v ./tensorrtllm_backend:/tensorrtllm_backend \
+--gpus '"device=0"' -v ./tensorrtllm_backend:/tensorrtllm_backend \
 nvcr.io/nvidia/tritonserver:23.10-trtllm-python-py3 bash
 ```
 
 ### Install LLaMa2 requirements
-The following commands are to be executed inside the docker container that we started in the above. Command assumes that we already have the engine file for the model that we are deploying. Follow this [document to create the engine file](https://github.com/NVIDIA/TensorRT-LLM#quick-start). We have to adjust the commands based on the model that we are using and the location where we put the engine files. This example assumes that we have 2 folders
+The following commands are to be executed inside the Docker container that we started in the above section. The command assumes that we already have the engine file for the model that we are deploying. Follow this [document to create the engine file](https://github.com/NVIDIA/TensorRT-LLM#quick-start). We have to adjust the commands based on the model that we are using and the location where we put the engine files. This example assumes that we have 2 folders
 - tensorrtllm_backend/tensorrt_llm/examples/llama/Llama-2-13b-chat-hf
 - tensorrtllm_backend/tensorrt_llm/examples/llama/Llama-2-13b-chat-hf-engine
 

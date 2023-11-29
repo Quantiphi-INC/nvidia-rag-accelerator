@@ -19,8 +19,10 @@ if prompt := st.chat_input("What is Wireshark"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     response = query_llm(prompt)
     print(response.json)
-    response = response.json()['text_output']
-
+    try:
+        response = response.json()['text_output']
+    except:
+        response = "Couldn't get a response from LLM"
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         st.markdown(response)

@@ -21,6 +21,7 @@ cd tensorrtllm_backend/
 git lfs install
 git lfs pull
 git submodule update --init --recursive
+cd ../
 ```
 Clone and place a embedding model of choice under `backend/embedding_model`. We have used `BAAI/bge-base-en-v1.5`.
 any changes to the embedding model has to be updated in backend/config.yml file.
@@ -52,7 +53,12 @@ Running this docker container will add the container to the same network as othe
 
 ```shell
 # Update HF_TOKEN
-docker run --rm -it --env HF_TOKEN=hf_* --name=triton_server --network rag_accelerator -p8000:8000 -p8001:8001 -p8002:8002 --shm-size=2g --ulimit memlock=-1 --ulimit stack=67108864 --gpus '"device=1"' -v ./tensorrtllm_backend:/tensorrtllm_backend nvcr.io/nvidia/tritonserver:23.10-trtllm-python-py3 bash
+docker run --rm -it --env HF_TOKEN=hf_* \
+--name=triton_server --network rag_accelerator \
+-p8000:8000 -p8001:8001 -p8002:8002 --shm-size=2g \
+--ulimit memlock=-1 --ulimit stack=67108864 \
+--gpus '"device=1"' -v ./tensorrtllm_backend:/tensorrtllm_backend \
+nvcr.io/nvidia/tritonserver:23.10-trtllm-python-py3 bash
 ```
 
 ### Install Llama requirements
@@ -84,6 +90,7 @@ sed -i 's#${engine_dir}#/tensorrtllm_backend/tensorrt_llm/examples/llama/Llama-2
 Run the command to start the triton server: 
 `tritonserver --model-repository=/opt/tritonserver/inflight_batcher_llm`
 
+Now we have all the services ready. The frontend will be accessible on http://localhost:8501 port.
 
 ## Reference
 - [Llama2 trtllm guide](https://github.com/triton-inference-server/tutorials/blob/main/Popular_Models_Guide/Llama2/trtllm_guide.md)
